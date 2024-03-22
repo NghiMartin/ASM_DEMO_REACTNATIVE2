@@ -1,39 +1,58 @@
 // LoginForm.js
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {
-  View,
-  KeyboardAvoidingView,
-  Alert,
-  Image,
-  Text,
-  StyleSheet,
-  StatusBar,
   Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
 import CustomButton from '../../components/CustomButton';
 
-import {COLORS, FONTFAMILY, FONTSIZE} from '../../assets';
+import { TouchableOpacity } from 'react-native';
+import { COLORS, FONTFAMILY, FONTSIZE } from '../../assets';
 import InputField from '../../components/InputField';
-import {TouchableOpacity} from 'react-native';
 
-import {AppImages} from '../../assets';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { AppImages } from '../../assets';
 import CheckBox from '../../components/CheckBox';
+import { auth } from '../../config/FirebaseConfig';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../store/userSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
 const LoginScreen = ({onLogin, navigation}) => {
   const [username, setUsername] = useState('');
   //   console.log(username);
   const [password, setPassword] = useState('');
   //   console.log(password);
-  const [usernameError, setUsernameError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
   const [isCheckRemember, setisCheckRemember] = useState(false);
-  const [users, setUsers] = useState();
+  const [checkError, setError] = useState({});
+  const dispatch = useDispatch()
 
+  const handleError = (error, input) => {
+    setError((prevState) => ({ ...prevState, [input]: error }));
+  };
   const handleCheckBox = () => setisCheckRemember(!isCheckRemember);
 
+  const handleLogin= async()=>{
+    try {
+      const response = await signInWithEmailAndPassword(auth,username,password)
+      dispatch(setUser(response));
+      await AsyncStorage.setItem('auth',JSON.stringify(response))
+      navigation.navigate('MainNavigator')
+    } catch (error) {
+      if(error.code=="auth/invalid-credential"){
+        handleError('Tài khoản chưa được đăng ký',"email")
+      }
+    }
+  }
+
+  
   return (
     <KeyboardAvoidingView>
       <StatusBar hidden />
@@ -62,18 +81,18 @@ const LoginScreen = ({onLogin, navigation}) => {
               color: 'black',
               fontSize: FONTSIZE.size_16,
               fontFamily: FONTFAMILY.poppins_,
+              marginBottom: 20
             }}>
             Đăng nhập tài khoản
           </Text>
           <InputField
             placeholder="Email"
             onChangeText={setUsername}
-            value={username}
+            error={checkError?.email}
           />
           <InputField
             placeholder="Password"
             onChangeText={setPassword}
-            value={password}
             password={true}
           />
           <View
@@ -107,7 +126,7 @@ const LoginScreen = ({onLogin, navigation}) => {
             </TouchableOpacity>
           </View>
                 
-          <CustomButton label="Login" onPress={() => {}} />
+          <CustomButton label="Login" onPress={handleLogin} />
           <View style={{width: width - 40, alignItems: 'center'}}>
             <View
               style={{
@@ -163,7 +182,7 @@ const LoginScreen = ({onLogin, navigation}) => {
               }}>
               Bạn không có tài khoản?
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {navigation.navigate('SignUpScreen')}}>
               <Text
                 style={{
                   color: COLORS.primaryGreenHex,

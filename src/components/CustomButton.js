@@ -5,13 +5,12 @@ import LinearGradient from 'react-native-linear-gradient';
 export default function CustomButton({label, onPress}) {
   return (
     <LinearGradient
-    onPress={onPress}
     colors={[COLORS.primaryGreenHex, COLORS.greenHex]}
     start={{ x: 0.0, y: 0.25 }}
     end={{ x: 0.5, y: 1.0 }}
     style={styles.containerButton}
     >
-  <TouchableOpacity>
+  <TouchableOpacity onPress={onPress}>
       <Text
         style={styles.text}>
         {label}

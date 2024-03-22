@@ -11,7 +11,6 @@ const COLORS = {
   RED:'red',
   GRAY: 'gray'
 }
-
  const FONTFAMILY = {
   poppins_black: 'Poppins-Black',
   poppins_bold: 'Poppins-Bold',

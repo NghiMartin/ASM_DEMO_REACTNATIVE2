@@ -1,13 +1,19 @@
-import { View } from "react-native";
-import InputField from "./src/components/InputField";
-import LoginScreen from "./src/screens/auth/LoginScreen";
-import SplashScreen from "./src/screens/auth/SplashScreen";
-import SignUpScreen from "./src/screens/auth/SignUpScreen";
+import { Provider } from "react-redux";
+import AppRouters from "./src/navigators/AppRouters";
+import { store } from "./src/store/store";
+import { NavigationContainer } from '@react-navigation/native';
+import MainNavigator from "./src/navigators/MainNavigator";
+import AuthNavigator from "./src/navigators/AuthNavigator";
 
 export default function App() {
-  return(
-    <View>
-     <SignUpScreen/>
-    </View>
+  return (
+    <>
+      <Provider store={store}>
+        <NavigationContainer>
+          <AppRouters />
+        </NavigationContainer>
+      </Provider>
+    </>
+
   )
 }

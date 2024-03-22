@@ -10,7 +10,6 @@ export default function SplashScreen() {
         >
         </ImageBackground>
         </View>
- 
     )
 }
 const  styles = StyleSheet.create({
